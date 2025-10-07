@@ -18,6 +18,41 @@ function HUD() {
   const [lights, setLights] = useState("Off");
   const [speed, setSpeed] = useState(50);
 
+  const API_URL = "http://192.168.7.9:5000"; // 
+
+  const moveCar = (direction, speed) => {
+    fetch(`${API_URL}/car/move`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ "type":"move", direction, speed })
+    })
+      .then(res => res.json())
+      .then(data => console.log("Move response:", data))
+      .catch(err => console.error("Error:", err));
+  };
+
+
+  const stopCar = (direction, speed) => {
+    fetch(`${API_URL}/car/stop`, { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ "type":"move", direction, speed }) })
+      .then(res => res.json())
+      .then(data => console.log("Stop response:", data))
+      .catch(err => console.error("Error:", err));
+  };
+
+
+  const setLight = (direction, speed) => {
+    fetch(`${API_URL}/car/lights`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ "type":"light", direction, speed })  // "front", "rear", "left", "right", "off"
+    })
+      .then(res => res.json())
+      .then(data => console.log("Lights response:", data))
+      .catch(err => console.error("Error:", err));
+  };
+  ///////////////////////////////////////////////////////////////////////////////////////////
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login"); 
@@ -72,6 +107,7 @@ function HUD() {
             setDirection("up");
             setCarImg(CarF);
             setMoving(true);
+            moveCar("front", speed);
           }}
           animate={direction === "up" ? { scale: [1, 1.2, 1] } : { scale: 1 }}
           transition={{ duration: 0.3 }}
@@ -87,6 +123,7 @@ function HUD() {
               setDirection("left");
               setCarImg(CarL);
               setMoving(true);
+              moveCar("left", speed);
             }}
             animate={
               direction === "left" ? { scale: [1, 1.2, 1] } : { scale: 1 }
@@ -103,6 +140,7 @@ function HUD() {
               setDirection("stop");
               setCarImg(Car);
               setMoving(false);
+              stopCar("up", speed);
             }}
             animate={
               direction === "stop" ? { scale: [1, 1.2, 1] } : { scale: 1 }
@@ -119,6 +157,7 @@ function HUD() {
               setDirection("right");
               setCarImg(CarR);
               setMoving(true);
+              moveCar("right", speed);
             }}
             animate={
               direction === "right" ? { scale: [1, 1.2, 1] } : { scale: 1 }
@@ -136,6 +175,7 @@ function HUD() {
             setDirection("down");
             setCarImg(CarB);
             setMoving(true);
+            moveCar("rear", speed);
           }}
           animate={direction === "down" ? { scale: [1, 1.2, 1] } : { scale: 1 }}
           transition={{ duration: 0.3 }}
@@ -165,25 +205,33 @@ function HUD() {
             </h3>
             <button
               className="border-2 mt-2 bg-transparent h-11 font-mono text-white rounded-md cursor-pointer hover:bg-pink-950/40 w-45 mx-auto"
-              onClick={() => setCarImg(CarF)}
+              onClick={() => {setCarImg(CarF)
+                setLight("front", speed);}
+              }
             >
               Head Lights
             </button>
             <button
               className="border-2 mt-2 bg-transparent h-11 font-mono text-white rounded-md cursor-pointer hover:bg-pink-950/40 w-45 mx-auto"
-              onClick={() => setCarImg(CarL)}
+              onClick={() => {setCarImg(CarL)
+                setLight("left", speed)}
+              }
             >
               Left Turn Signal
             </button>
             <button
               className="border-2 mt-2 bg-transparent h-11 font-mono text-white rounded-md cursor-pointer hover:bg-pink-950/40 w-45 mx-auto"
-              onClick={() => setCarImg(CarR)}
+              onClick={() => {setCarImg(CarR)
+                setLight("right", speed)}
+              }
             >
               Right Turn Signal
             </button>
             <button
               className="border-2 mt-2 bg-transparent h-11 font-mono text-white rounded-md cursor-pointer hover:bg-pink-950/40 w-45 mx-auto"
-              onClick={() => setCarImg(CarB)}
+              onClick={() => {setCarImg(CarB)
+                setLight("rear", speed)}
+              }
             >
               Rear Lights
             </button>
@@ -246,12 +294,12 @@ function HUD() {
             </h2>
             <img
               alt="vid"
-              src="a"
+              src="http://172.18.181.240:8081"
               className="bg-white -ml-28 my-auto w-109 h-96 border-3 rounded-2xl border-white"
             />
           </div>
 
-          {/* <img src="http://localhost:5000/video_feed" alt="Video en tiempo real" /> */}
+          {/* <img http://${API_URL}:8081/ src="http://localhost:5000/video_feed" alt="Video en tiempo real" /> */}
         </div>
       </div>
     </div>
